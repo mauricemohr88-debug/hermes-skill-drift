@@ -100,10 +100,12 @@ hermes skill-drift compare --repo /path/to/hermes-agent \
   --before OLD_COMMIT --after NEW_COMMIT --skills /path/to/selected-skills
 ```
 
-For a source install, install this package using the Python belonging to your Hermes
+For a source install, install this package using the supported Python belonging to your Hermes
 environment, then run `hermes plugins enable skill-drift` and
 `hermes skill-drift --help`. Installing into an unrelated pipx/venv environment provides
 the standalone command only; Hermes cannot discover that environment's entry points.
+The standalone scanner supports Python 3.10+; newer Hermes versions can require a newer
+Python runtime (the tested September 27 host requires 3.14).
 
 There is no model-callable tool, slash command, update hook or automatic profile scan in
 this beta. Native discovery and CLI dispatch are tested in an isolated real Hermes install. See

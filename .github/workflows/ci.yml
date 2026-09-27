@@ -7,9 +7,10 @@ permissions:
 jobs:
   test:
     strategy:
+      fail-fast: false
       matrix:
         os: [ubuntu-latest]
-        python: ['3.10', '3.11', '3.12', '3.13']
+        python: ['3.10', '3.11', '3.12', '3.13', '3.14']
         include:
           - os: macos-latest
             python: '3.11'
@@ -32,10 +33,13 @@ jobs:
   native-hermes:
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        hermes:
-          - b6b53c69a6ed49cb099cf1bfe76b5e6edd718e5a
-          - 41755854adfd96e2871badefdec7993f62324481
+        include:
+          - hermes: b6b53c69a6ed49cb099cf1bfe76b5e6edd718e5a
+            python: '3.11'
+          - hermes: 41755854adfd96e2871badefdec7993f62324481
+            python: '3.14'
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -48,7 +52,7 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
-          python-version: '3.11'
+          python-version: ${{ matrix.python }}
       - run: python -m pip install -e ./upstream-hermes .
       - run: python examples/create_demo.py ./my-drift-demo
       - name: Real native plugin discovery and CLI lifecycle in a temporary profile

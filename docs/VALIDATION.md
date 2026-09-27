@@ -71,8 +71,11 @@ contents, duplicate JSON keys, parser structural keywords, and Unicode display c
 Missing blobs no longer create fabricated empty-file diffs. Dynamic declarations remain
 explicitly unresolved instead of being mislabeled as removals.
 
-The repository's checks workflow runs tests/builds on Linux Python 3.10–3.13 and macOS
-Python 3.11, plus native integration on the two pinned Hermes revisions above.
+The repository's checks workflow runs tests/builds on Linux Python 3.10–3.14 and macOS
+Python 3.11, plus native integration on the two pinned Hermes revisions above. The older
+Hermes revision uses Python 3.11; the newer revision requires Python 3.14 at runtime.
+An initial integration run on 3.11 exposed the newer host's dependency-marker boundary;
+the matrix follows each host's actual supported runtime instead of masking missing deps.
 See the [actual workflow runs](https://github.com/mauricemohr88-debug/hermes-skill-drift/actions/workflows/ci.yml)
 for hosted execution status; local results are not a substitute for hosted CI.
 
