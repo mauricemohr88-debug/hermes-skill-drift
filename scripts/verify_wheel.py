@@ -1,0 +1,99 @@
+"""Install the built wheel offline into a new environment and exercise the public CLI."""
+
+import hashlib
+import json
+import os
+import subprocess
+import sys
+import tempfile
+import venv
+from pathlib import Path
+
+from hermes_skill_drift import __version__
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+def main() -> None:
+    wheel = ROOT / "dist" / f"hermes_skill_drift-{__version__}-py3-none-any.whl"
+    if not wheel.is_file():
+        raise SystemExit("Build the current wheel first")
+    with tempfile.TemporaryDirectory(prefix="skill-drift-wheel-") as temporary:
+        base = Path(temporary).resolve()
+        environment = base / "venv"
+        venv.EnvBuilder(with_pip=True).create(environment)
+        python = environment / "bin" / "python"
+        cli = environment / "bin" / "hermes-skill-drift"
+        subprocess.run(
+            [str(python), "-m", "pip", "install", "--no-index", "--no-deps", str(wheel)],
+            check=True,
+            cwd=base,
+        )
+        demo = base / "demo"
+        subprocess.run(
+            [sys.executable, str(ROOT / "examples/create_demo.py"), str(demo)], check=True
+        )
+        files = sorted((demo / "skills").rglob("*.md"))
+        original = [hashlib.sha256(p.read_bytes()).hexdigest() for p in files]
+        common = ["--repo", str(demo / "source"), "--skills", str(demo / "skills")]
+        env = {k: v for k, v in os.environ.items() if k not in {"PYTHONPATH", "PYTHONHOME"}}
+
+        def run(arguments: list[str], expected: int) -> str:
+            result = subprocess.run(
+                [str(cli), *arguments],
+                cwd=base,
+                env=env,
+                capture_output=True,
+                text=True,
+                timeout=45,
+                check=False,
+            )
+            assert result.returncode == expected, (result.returncode, result.stdout, result.stderr)
+            return result.stdout
+
+        assert run(["--version"], 0).strip() == __version__
+        report = json.loads(
+            run(
+                [
+                    "compare",
+                    *common,
+                    "--before",
+                    "before",
+                    "--after",
+                    "after",
+                    "--format",
+                    "json",
+                ],
+                1,
+            )
+        )
+        assert report["status"] == "needs_review" and len(report["findings"]) == 6
+        assert len({f["skill"]["path"] for f in report["findings"]}) == 5
+        baseline = base / "snapshot.json"
+        run(["baseline", *common, "--ref", "before", "--output", str(baseline)], 0)
+        digest = hashlib.sha256(baseline.read_bytes()).hexdigest()
+        run(["check", *common, "--baseline", str(baseline), "--after", "after"], 1)
+        assert hashlib.sha256(baseline.read_bytes()).hexdigest() == digest
+        run(["baseline", *common, "--ref", "before", "--output", str(baseline)], 2)
+        run(["check", *common, "--baseline", str(base / "missing.json")], 2)
+        assert original == [hashlib.sha256(p.read_bytes()).hexdigest() for p in files]
+        probe = subprocess.check_output(
+            [
+                str(python),
+                "-I",
+                "-c",
+                "from importlib.metadata import distribution; "
+                "e=next(e for e in distribution('hermes-skill-drift').entry_points "
+                "if e.group=='hermes_agent.plugins'); assert callable(e.load().register); "
+                "import hermes_skill_drift; print(hermes_skill_drift.__file__)",
+            ],
+            cwd=base,
+            env=env,
+            text=True,
+        )
+        assert str(environment) in probe
+    print("Fresh-wheel CLI, snapshot integrity, refusal cases and plugin entry point: passed")
+
+
+if __name__ == "__main__":
+    main()

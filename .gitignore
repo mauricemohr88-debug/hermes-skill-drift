@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+dist/
+*.egg-info/
+evidence/private/
+/my-drift-demo/
+/baseline*.json
+/PLAN.md
+/ERGEBNIS.md
+/review-*.json
+/docs/PUBLIC-SOURCE-*.json
+/docs/PUBLIC-SOURCE-*.md
+/docs/DEMO-REPORT.md
