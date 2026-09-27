@@ -19,6 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      actions: read
     steps:
       - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
@@ -35,6 +36,13 @@ jobs:
               version = tomllib.load(stream)['project']['version']
           assert os.environ['RELEASE_TAG'] == 'v' + version
           PY
+      - name: Require successful cross-platform and native CI for this exact commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          release_sha="$(git rev-parse HEAD)"
+          verified="$(gh api "repos/$GITHUB_REPOSITORY/actions/workflows/ci.yml/runs?head_sha=$release_sha&status=completed&per_page=20" --jq '.workflow_runs | any(.conclusion == "success")')"
+          test "$verified" = true
       - run: python -m pip install -e '.[dev]'
       - run: pytest -q && ruff check . && ruff format --check .
       - run: python -m build && python -m twine check dist/*
