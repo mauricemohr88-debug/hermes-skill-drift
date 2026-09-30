@@ -17,10 +17,36 @@ environment (also works without PyPI):
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install "git+https://github.com/mauricemohr88-debug/hermes-skill-drift.git@v0.1.0"
+.venv/bin/python -m pip install "git+https://github.com/mauricemohr88-debug/hermes-skill-drift.git@v0.1.1"
 source .venv/bin/activate
-hermes-skill-drift --help
+hermes-skill-drift demo
 ```
+
+### Packaged offline demo
+
+Version 0.1.1 includes a first try that needs no Hermes installation, private skills or
+downloaded example files. After installing the pinned release above, run:
+
+```sh
+hermes-skill-drift demo
+```
+
+The demo creates a new private temporary directory with a synthetic Git repository,
+two synthetic commits and ten example skills. It then snapshots and compares them using
+the real scanner, prints a short findings preview, and leaves a Markdown/JSON report for
+inspection. It does not inspect, install into or change your real Hermes or your skills.
+After installation, the demo needs only Python and Git; it makes no network or model calls.
+
+Expect six review hints across five example skills and five unmarked controls. Demo
+exit 0 means this constructed example behaved as expected. The report still says
+`needs_review`, and a normal comparison of the same fixture exits 1. Neither result
+approves real skills or establishes real-world accuracy. Newly added options are not
+automatically equivalent replacements for removed ones.
+
+For a chosen location, use `hermes-skill-drift demo --directory ./my-drift-demo`.
+The directory must not already exist; existing files and symlink paths are refused.
+Generated baselines/reports remain on your machine. See [the walkthrough](docs/TRY_IT.md)
+for a one-minute tour and a small external test task.
 
 Before an update, select only the skills you want inspected:
 

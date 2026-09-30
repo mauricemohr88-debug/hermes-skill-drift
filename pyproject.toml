@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "hermes-skill-drift"
-version = "0.1.0"
+version = "0.1.1"
 description = "Read-only Git-version evidence for reviewing Hermes skills after updates"
 readme = "README.md"
 requires-python = ">=3.10"

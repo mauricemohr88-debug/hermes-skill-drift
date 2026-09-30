@@ -1,4 +1,42 @@
-# Release validation — 27 September 2026
+# Validation record
+
+## Version 0.1.1 local release checks — 30 September 2026
+
+The results below were recorded before tagging 0.1.1. They are local evidence, not
+hosted CI or another user's acceptance. The release is gated on successful hosted
+checks for its exact commit; inspect the linked workflow runs and release notes for
+the publication result.
+
+- 62 tests passed on macOS / Python 3.11.15; Ruff lint/format and Git whitespace checks passed.
+- Wheel and source distribution built; Twine metadata and publication-content checks passed.
+- A fresh environment installed only the wheel with the index disabled, outside the
+  checkout. The packaged `demo` command produced six exact expected skill/line/change
+  mappings on skill-01 through skill-05, with no findings on controls skill-06 through
+  skill-10. The plugin entry point still loaded from the installed package.
+- The demo retains private baseline, Markdown and JSON reports. It verifies unchanged
+  baseline bytes, selected skill text/hashes, working tree and before/after Git refs after
+  comparison. Mutation and wrong-control-path regressions fail instead of returning success.
+- Existing paths and symlink parents are refused. Inherited Git settings/templates are
+  isolated, hooks/signing are disabled, and demo Git subprocesses have bounded output/time.
+- Ordinary comparison/snapshot checks, overwrite refusal and missing-baseline exit codes
+  passed in the fresh wheel. The legacy example still works from an uninstalled checkout.
+
+Demo exit 0 confirms only its constructed acceptance case. Its report remains
+`needs_review` / `reviewed: false`, and normal comparison still exits 1 for that report.
+The demo creates only its own synthetic repository/files and two synthetic commits;
+it does not inspect or modify a real Hermes installation or execute scanned instructions.
+
+An independent review found that checking finding counts alone could accept wrong skill
+assignments. Exact mappings and the regression above close that gap. A JEV request returned
+HTTP 403 once; no approval, retry, provider switch or billing change was assumed.
+The original public 0.1.0 wheel/sdist checksums remained unchanged.
+
+External first-try usability, real custom-skill relevance, demand and willingness to pay
+remain unmeasured. Linux, a new real native Hermes host run and hosted CI were not
+executed as part of these local checks. See docs/TRY_IT.md for the bounded external
+feedback task.
+
+## Published 0.1.0 — 27 September 2026
 
 Version 0.1.0 · early beta · supported standalone platforms: macOS and Linux.
 

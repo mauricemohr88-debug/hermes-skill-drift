@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.1.1 — 2026-09-30
+
+- Package the synthetic offline demo so an installed wheel needs no example checkout.
+- Add an explicit `demo` command with a findings preview and retained private reports.
+- Keep ordinary audit status/exit-code semantics separate from demo self-check success.
+- Add a one-minute walkthrough and a minimal, privacy-conscious external tester task.
+
 ## 0.1.0 — 2026-09-27
 
 First public beta.

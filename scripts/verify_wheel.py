@@ -52,6 +52,47 @@ def main() -> None:
             return result.stdout
 
         assert run(["--version"], 0).strip() == __version__
+        packaged_demo = base / "packaged-demo"
+        preview = run(["demo", "--directory", str(packaged_demo)], 0)
+        bundled_report = json.loads((packaged_demo / "report.json").read_text(encoding="utf-8"))
+        assert bundled_report["status"] == "needs_review"
+        assert bundled_report["reviewed"] is False
+        assert len(bundled_report["findings"]) == 6
+        expected_affected = {
+            str(packaged_demo / "skills" / f"skill-{number:02d}" / "SKILL.md")
+            for number in range(1, 6)
+        }
+        assert {item["skill"]["path"] for item in bundled_report["findings"]} == expected_affected
+        actual_mappings = {
+            (
+                str(Path(item["skill"]["path"]).relative_to(packaged_demo / "skills")),
+                item["skill"]["line"],
+                item["source_change"]["key"],
+                item["source_change"]["change"],
+            )
+            for item in bundled_report["findings"]
+        }
+        assert actual_mappings == {
+            ("skill-01/SKILL.md", 2, "hermes model --legacy", "removed"),
+            ("skill-01/SKILL.md", 2, "hermes model --refresh", "added"),
+            ("skill-02/SKILL.md", 2, "demo_tool", "changed"),
+            ("skill-03/SKILL.md", 2, "docs/old-guide.md", "removed"),
+            ("skill-04/SKILL.md", 2, "docs/guide.md", "changed"),
+            ("skill-05/SKILL.md", 2, "hermes model --refresh", "added"),
+        }
+        assert "--legacy" in preview and "needs_review" in preview
+        assert (packaged_demo / "report.md").is_file()
+        packaged_hashes = {
+            path: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in packaged_demo.rglob("*")
+            if path.is_file()
+        }
+        run(["demo", "--directory", str(packaged_demo)], 2)
+        assert packaged_hashes == {
+            path: hashlib.sha256(path.read_bytes()).hexdigest()
+            for path in packaged_demo.rglob("*")
+            if path.is_file()
+        }
         report = json.loads(
             run(
                 [
@@ -92,7 +133,10 @@ def main() -> None:
             text=True,
         )
         assert str(environment) in probe
-    print("Fresh-wheel CLI, snapshot integrity, refusal cases and plugin entry point: passed")
+    print(
+        "Fresh-wheel packaged demo, CLI, snapshot integrity, refusal cases "
+        "and plugin entry point: passed"
+    )
 
 
 if __name__ == "__main__":

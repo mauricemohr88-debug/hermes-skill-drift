@@ -7,7 +7,7 @@ on:
       tag:
         description: Existing tested release tag
         required: true
-        default: v0.1.0
+        default: v0.1.1
 permissions: {}
 concurrency:
   group: pypi-${{ github.event.release.tag_name || inputs.tag }}

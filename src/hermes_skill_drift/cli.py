@@ -8,6 +8,7 @@ import sys
 from pathlib import Path
 
 from . import __version__
+from .demo import run_demo
 from .engine import compare, snapshot
 from .report import render
 from .storage import AuditError, load_baseline, write_new
@@ -16,6 +17,8 @@ from .storage import AuditError, load_baseline, write_new
 def configure(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--version", action="version", version=__version__)
     commands = parser.add_subparsers(dest="drift_action", required=True)
+    demo = commands.add_parser("demo", help="Create and verify a retained synthetic offline demo")
+    demo.add_argument("--directory", type=Path, metavar="NEW_DIRECTORY")
     baseline = commands.add_parser(
         "baseline", help="Record an unreviewed local source/skill snapshot"
     )
@@ -44,6 +47,34 @@ def configure(parser: argparse.ArgumentParser) -> None:
 
 
 def execute(args: argparse.Namespace) -> int:
+    if args.drift_action == "demo":
+        try:
+            details, report = run_demo(args.directory)
+        except (AuditError, OSError, RecursionError) as exc:
+            print(f"Demo failed: {exc}", file=sys.stderr)
+            return 2
+        preview = []
+        for finding in report["findings"][:3]:
+            skill = Path(finding["skill"]["path"]).relative_to(details["skills"])
+            change = finding["source_change"]
+            preview.append(
+                f"  {skill}:{finding['skill']['line']}: {change['key']} — {change['change']}"
+            )
+        print(
+            "Synthetic offline demo completed.\n"
+            f"Directory: {details['demo']}\n"
+            f"Baseline: {details['baseline']}\n"
+            f"Report: {details['report']}\n"
+            f"JSON report: {details['report_json']}\n"
+            f"Status: {report['status']} — {len(report['findings'])} findings "
+            "across 5 skill paths.\n"
+            "Preview (5 other skills are clean controls):\n" + "\n".join(preview) + "\n"
+            "Example: --legacy was removed and --refresh was added. The new option is NOT "
+            "an automatically equivalent replacement.\n"
+            "The scanner normally exits 1 for needs_review; this demo exits 0 only because "
+            "its expected test case passed. No compatibility approval was granted."
+        )
+        return 0
     try:
         if args.drift_action == "baseline":
             data = snapshot(args.repo, args.ref, args.skills)
