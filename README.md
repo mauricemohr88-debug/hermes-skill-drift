@@ -1,6 +1,17 @@
-# Hermes Skill Drift Check
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mauricemohr88-debug/hermes-skill-drift/main/docs/assets/banner.svg" alt="Hermes Skill Drift Check: which parts of my own skills deserve another look after a Hermes update?" width="100%">
+</p>
 
-**Which parts of my own skills deserve another look after a Hermes update?**
+<p align="center">
+  <a href="https://github.com/mauricemohr88-debug/hermes-skill-drift/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/mauricemohr88-debug/hermes-skill-drift/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/mauricemohr88-debug/hermes-skill-drift/releases"><img alt="release" src="https://img.shields.io/github/v/release/mauricemohr88-debug/hermes-skill-drift?include_prereleases&style=flat-square&color=a78bfa"></a>
+  <img alt="status: beta" src="https://img.shields.io/badge/status-beta-5eead4?style=flat-square">
+  <img alt="Python 3.10+" src="https://img.shields.io/badge/python-3.10%2B-1b1240?style=flat-square">
+  <img alt="no telemetry, no model calls" src="https://img.shields.io/badge/no_telemetry-no_model_calls-0f3a4a?style=flat-square">
+  <a href="https://github.com/mauricemohr88-debug/hermes-skill-drift/blob/main/LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-0c0820?style=flat-square"></a>
+</p>
+
+<p align="center"><b>Which parts of my own skills deserve another look after a Hermes update?</b></p>
 
 This local, read-only Python tool compares two committed Hermes source versions and
 maps supported native interface changes to explicit references in your selected
@@ -30,6 +41,12 @@ downloaded example files. After installing the pinned release above, run:
 ```sh
 hermes-skill-drift demo
 ```
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/mauricemohr88-debug/hermes-skill-drift/main/docs/assets/demo-output.svg" alt="Demo output: needs_review, 6 findings across 5 skill paths; skill-01 lost hermes model --legacy and gained --refresh, skill-02 has a changed demo_tool; 5 other skills are clean controls" width="100%">
+  <br>
+  <sub>Output of a real <code>hermes-skill-drift demo</code> run (v0.1.1), temporary paths left out.</sub>
+</p>
 
 The demo creates a new private temporary directory with a synthetic Git repository,
 two synthetic commits and ten example skills. It then snapshots and compares them using

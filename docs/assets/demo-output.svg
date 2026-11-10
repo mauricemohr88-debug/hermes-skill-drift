@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="t d">
+  <title id="t">hermes-skill-drift demo output</title>
+  <desc id="d">Output of the packaged offline demo of v0.1.1 (temporary paths left out): needs_review, 6 findings across 5 skill paths; skill-01 lost hermes model --legacy and gained --refresh, skill-02 has a changed demo_tool; 5 other skills are clean controls.</desc>
+  <!-- Text copied from a real run of `hermes-skill-drift demo` (v0.1.1); only the four temporary-path lines are omitted. -->
+  <rect width="1200" height="420" rx="18" fill="#0c0820"/>
+  <rect x="1" y="1" width="1198" height="418" rx="17" fill="none" stroke="#a78bfa" stroke-opacity="0.35" stroke-width="2"/>
+  <path d="M1 56 H1199" stroke="#a78bfa" stroke-opacity="0.2"/>
+  <g><circle cx="32" cy="29" r="7" fill="#ff6b6b"/><circle cx="56" cy="29" r="7" fill="#ffd166"/><circle cx="80" cy="29" r="7" fill="#5eead4"/></g>
+  <text x="108" y="34" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="15" fill="#8b80b5">synthetic offline demo · no network, no model calls</text>
+  <g font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="19" fill="#e4dcff">
+    <text x="32" y="98"><tspan fill="#8b80b5">$</tspan> hermes-skill-drift demo</text>
+    <text x="32" y="136" fill="#b4abd6">Synthetic offline demo completed.</text>
+    <text x="32" y="174">Status: <tspan fill="#ffd166" font-weight="700">needs_review</tspan> — 6 findings across 5 skill paths.</text>
+    <text x="32" y="212" fill="#b4abd6">Preview (5 other skills are clean controls):</text>
+    <text x="56" y="250">skill-01/SKILL.md:2: hermes model --legacy — <tspan fill="#ff8f8f">removed</tspan></text>
+    <text x="56" y="286">skill-01/SKILL.md:2: hermes model --refresh — <tspan fill="#5eead4">added</tspan></text>
+    <text x="56" y="322">skill-02/SKILL.md:2: demo_tool — <tspan fill="#c4b5fd">changed</tspan></text>
+    <text x="32" y="372" font-size="16" fill="#8b80b5">The new option is NOT an automatically equivalent replacement.</text>
+    <text x="32" y="398" font-size="16" fill="#8b80b5">No compatibility approval was granted.</text>
+  </g>
+</svg>
